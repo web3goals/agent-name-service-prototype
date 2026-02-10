@@ -4,6 +4,8 @@ import z from "zod";
 import { logger } from "./logger";
 import {
   getMoltbookSubmoltPosts,
+  getMoltbookSubmoltPostsToMintAnsNames,
+  mintAnsName,
   postMoltbookComment,
   postMoltbookSubmoltPost,
   verifyMoltbookPost,
@@ -79,6 +81,39 @@ const postMoltbookCommentTool = tool(
   },
 );
 
+const getMoltbookSubmoltPostsToMintAnsNamesTool = tool(
+  async (input) => await getMoltbookSubmoltPostsToMintAnsNames(input.submolt),
+  {
+    name: "get_moltbook_submolt_posts_to_mint_ans_names",
+    description:
+      "Get the latest posts from a Moltbook submolt that are requests to mint ANS names.",
+    schema: z.object({
+      submolt: z
+        .string()
+        .describe(
+          "Name of the submolt to retrieve posts from (e.g., 'ans-requests').",
+        ),
+    }),
+  },
+);
+
+const mintAnsNameTool = tool(
+  async (input) => await mintAnsName(input.ansName, input.recipient),
+  {
+    name: "mint_ans_name",
+    description:
+      "Mint a new Agent Name Service (ANS) name (.agent) for a recipient which must be a wallet address (0x...).",
+    schema: z.object({
+      ansName: z
+        .string()
+        .describe("The .agent name to mint (e.g., 'monad.agent')."),
+      recipient: z
+        .string()
+        .describe("The wallet address of the recipient (0x...)."),
+    }),
+  },
+);
+
 const systemPrompt = `# Role
 You are the Agent Name Service (ANS) Seller, a specialized AI agent dedicated to managing and selling names for other AI agents and OpenClaw bots on the Monad network.
 
@@ -98,6 +133,11 @@ Use 'post_moltbook_comment' to reply to specific posts. This is the preferred wa
 1. **Posting Content**: Use 'post_moltbook_submolt_post' to share information. Be mindful of rate limits (1 post per 30 minutes). Ensure your posts are high-quality and add value to the community.
 2. **Verification**: When you post content, Moltbook may require a 'proof of agenthood' challenge. If the response from 'post_moltbook_submolt_post' indicates 'verification_required: true', you must solve the math problem in the 'challenge' field and then use 'verify_moltbook_post' with the provided 'verification_code' and your 'answer' (formatted as requested, usually with 2 decimal places) to publish your post.
 
+# Workflow: Minting ANS Names
+1. **Fetch Requests**: Use 'get_moltbook_submolt_posts_to_mint_ans_names' to identify posts from users requesting to mint an .agent name.
+2. **Mint Name**: For each valid request, use 'mint_ans_name' with the requested name and the recipient's wallet address.
+3. **Reply to Request**: Once a name is minted, use 'post_moltbook_comment' to reply to the original post with the result or confirmation of the minting process.
+
 ## Guidelines
 - **Be Professional**: You are a service provider. Be polite, clear, and helpful.
 - **Quality Over Quantity**: Moltbook values genuine interactions. Avoid spamming and follow the community rules.`;
@@ -109,6 +149,8 @@ const agent = createAgent({
     postMoltbookSubmoltPostTool,
     verifyMoltbookPostTool,
     postMoltbookCommentTool,
+    getMoltbookSubmoltPostsToMintAnsNamesTool,
+    mintAnsNameTool,
   ],
   systemPrompt,
 });

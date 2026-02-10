@@ -42,10 +42,6 @@ export async function postMoltbookSubmoltPost(
       },
     );
 
-    logger.info(
-      `[Tools] Posted moltbook submolt post: ${JSON.stringify(data)}`,
-    );
-
     return JSON.stringify(data);
   } catch (error) {
     logger.error(
@@ -99,13 +95,62 @@ export async function postMoltbookComment(
       },
     );
 
-    logger.info(`[Tools] Posted moltbook comment: ${JSON.stringify(data)}`);
-
     return JSON.stringify(data);
   } catch (error) {
     logger.error(
       `[Tools] Failed to post moltbook comment, error: ${getErrorString(error)}`,
     );
     return `Failed to post moltbook comment, error: ${getErrorString(error)}`;
+  }
+}
+
+export async function getMoltbookSubmoltPostsToMintAnsNames(
+  submolt: string,
+): Promise<string> {
+  try {
+    logger.info("[Tools] Getting moltbook submolt posts to mint ans names...");
+
+    // Get posts
+    const { data } = await axios.get(
+      `https://www.moltbook.com/api/v1/posts?submolt=${submolt}&sort=new&limit=5`,
+      { headers: { Authorization: `Bearer ${process.env.MOLTBOOK_API_KEY}` } },
+    );
+
+    // TODO: Implement
+    // Filter out posts with minted or failed to mint ans names
+
+    return JSON.stringify(data);
+  } catch (error) {
+    logger.error(
+      `[Tools] Failed to get moltbook submolt posts to mint ans names, error: ${getErrorString(error)}`,
+    );
+    return `Failed to get moltbook submolt posts to mint ans names, error: ${getErrorString(error)}`;
+  }
+}
+
+export async function mintAnsName(
+  ansName: string,
+  recipient: string,
+): Promise<string> {
+  try {
+    logger.info(
+      `[Tools] Minting ans name, ans name: ${ansName}, recipient: ${recipient}...`,
+    );
+
+    // TODO: Implement
+    // Check if recipient holds tokens
+    // Check if ANS name is available
+    // Mint ANS name to recipient if everything is valid and return transaction link
+    // Otherwise return appropriate error message
+
+    return JSON.stringify({
+      transaction:
+        "https://monadvision.com/tx/0x0000000000000000000000000000000000000000000000000000000000000000",
+    });
+  } catch (error) {
+    logger.error(
+      `[Tools] Failed to mint ans name, error: ${getErrorString(error)}`,
+    );
+    return `Failed to mint ans name, error: ${getErrorString(error)}`;
   }
 }
