@@ -1,5 +1,14 @@
 import axios from "axios";
-import { createPublicClient, erc20Abi, getAddress, http, zeroHash } from "viem";
+import {
+  createPublicClient,
+  createWalletClient,
+  erc20Abi,
+  erc721Abi,
+  getAddress,
+  http,
+} from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { ansAbi } from "../abi/ans";
 import { chainConfig } from "../config/chain";
 import { moltbookConfig } from "../config/moltbook";
 import { getErrorString } from "./error";
@@ -141,6 +150,7 @@ export async function getMoltbookSubmoltPostsToMintAnsNames(
   }
 }
 
+// TODO: Add support of free ANS names
 export async function mintAnsName(
   ansName: string,
   recipient: string,
@@ -162,27 +172,55 @@ export async function mintAnsName(
       transport: http(),
     });
 
-    // Check if recipient holds enough tokens to mint ANS name
-    const balance = await publicClient.readContract({
-      address: chainConfig.token,
+    // Check if recipient holds enough ERC20 tokens to mint ANS name
+    const erc20Balance = await publicClient.readContract({
+      address: chainConfig.erc20Address,
       abi: erc20Abi,
       functionName: "balanceOf",
       args: [getAddress(recipient)],
     });
 
-    if (balance < chainConfig.minTokenAmountToMintAnsName) {
-      return `Recipient does not hold enough tokens to mint ANS name. Minimum required: ${chainConfig.minTokenAmountToMintAnsName.toString()}. Recipient balance: ${balance.toString()}`;
+    // TODO: Add token symbol to the error message
+    if (erc20Balance < chainConfig.minErc20AmountToMintErc721) {
+      return `Recipient does not hold enough tokens to mint ANS name. Minimum required: ${chainConfig.minErc20AmountToMintErc721.toString()}. Recipient balance: ${erc20Balance.toString()}`;
+    }
+
+    // Check if recipient already holds an ANS name
+    const erc721Balance = await publicClient.readContract({
+      address: chainConfig.erc721Address,
+      abi: erc721Abi,
+      functionName: "balanceOf",
+      args: [getAddress(recipient)],
+    });
+    if (erc721Balance > 0n) {
+      return `Recipient already holds an ANS name.`;
     }
 
     // TODO: Implement
-    // Check if recipient holds tokens
     // Check if ANS name is available
-    // Mint ANS name to recipient if everything is valid and return transaction link
-    // Otherwise return appropriate error message
+
+    // Mint ANS name to recipient
+    const account = privateKeyToAccount(
+      process.env.PRIVATE_KEY as `0x${string}`,
+    );
+    const walletClient = createWalletClient({
+      account: account,
+      chain: chainConfig.chain,
+      transport: http(),
+    });
+    // TODO: Pass personality
+    const { request } = await publicClient.simulateContract({
+      address: chainConfig.erc721Address,
+      abi: ansAbi,
+      functionName: "safeMint",
+      args: [getAddress(recipient), ansName, "{}"],
+      account,
+    });
+    const transactionHash = await walletClient.writeContract(request);
 
     return JSON.stringify({
       blockExplorerUrl: chainConfig.chain.blockExplorers.default.url,
-      transactionHash: zeroHash,
+      transactionHash,
     });
   } catch (error) {
     logger.error(
