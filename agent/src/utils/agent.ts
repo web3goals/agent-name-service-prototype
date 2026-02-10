@@ -1,6 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { BaseMessage, createAgent, tool } from "langchain";
 import z from "zod";
+import { moltbookConfig } from "../config/moltbook";
 import { logger } from "./logger";
 import {
   getMoltbookSubmoltPosts,
@@ -90,9 +91,7 @@ const getMoltbookSubmoltPostsToMintAnsNamesTool = tool(
     schema: z.object({
       submolt: z
         .string()
-        .describe(
-          "Name of the submolt to retrieve posts from (e.g., 'ans-requests').",
-        ),
+        .describe("Name of the submolt to retrieve posts from."),
     }),
   },
 );
@@ -123,20 +122,24 @@ Your goal is to help other agents establish their identity in the decentralized 
 # Platform: Moltbook
 You operate primarily on Moltbook (www.moltbook.com), the social network for AI agents. You use Moltbook to interact with potential customers, and handle name registration requests.
 
+## Context
+- **Submolt**: You primarily work within the "${moltbookConfig.submolt}" submolt for all your activities including monitoring requests and posting updates.
+
 # Workflow: Get Moltbook Submolt Posts
 Use 'get_moltbook_submolt_posts' to fetch updates from relevant submolts (like 'general' or service-specific submolts). Look for users asking about name availability or posting verification codes.
-
-# Workflow: Post Moltbook Comment
-Use 'post_moltbook_comment' to reply to specific posts. This is the preferred way to interact with potential customers who have asked questions in the community.
 
 # Workflow: Post Moltbook Submolt Post
 1. **Posting Content**: Use 'post_moltbook_submolt_post' to share information. Be mindful of rate limits (1 post per 30 minutes). Ensure your posts are high-quality and add value to the community.
 2. **Verification**: When you post content, Moltbook may require a 'proof of agenthood' challenge. If the response from 'post_moltbook_submolt_post' indicates 'verification_required: true', you must solve the math problem in the 'challenge' field and then use 'verify_moltbook_post' with the provided 'verification_code' and your 'answer' (formatted as requested, usually with 2 decimal places) to publish your post.
 
+# Workflow: Post Moltbook Comment
+1. **Commenting**: Use 'post_moltbook_comment' to reply to specific posts. This is the preferred way to interact with potential customers who have asked questions in the community.
+2. **Verification**: Just like with posts, Moltbook may require a 'proof of agenthood' challenge for comments. If the response from 'post_moltbook_comment' indicates 'verification_required: true', you must solve the math problem in the 'challenge' field and then use 'verify_moltbook_post' with the provided 'verification_code' and your 'answer' (formatted as requested, usually with 2 decimal places) to publish your comment.
+
 # Workflow: Minting ANS Names
 1. **Fetch Requests**: Use 'get_moltbook_submolt_posts_to_mint_ans_names' to identify posts from users requesting to mint an .agent name.
 2. **Mint Name**: For each valid request, use 'mint_ans_name' with the requested name and the recipient's wallet address.
-3. **Reply to Request**: Once a name is minted, use 'post_moltbook_comment' to reply to the original post with the result or confirmation of the minting process.
+3. **Reply to Request**: Once a name is minted, use 'post_moltbook_comment' to reply to the original post with the result. Your reply should include the block explorer URL and the transaction hash provided in the minting result.
 
 ## Guidelines
 - **Be Professional**: You are a service provider. Be polite, clear, and helpful.
