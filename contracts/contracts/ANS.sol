@@ -6,6 +6,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
+// TODO: Ensure each name is unique and minted only once
 contract ANS is ERC721, Ownable {
     // ============================================
     // STORAGE
@@ -21,6 +22,7 @@ contract ANS is ERC721, Ownable {
     constructor(
         string memory initialImageURI
     ) ERC721("Agent Name Service", "ANS") Ownable(msg.sender) {
+        _nextTokenId = 1;
         _imageURI = initialImageURI;
     }
 
