@@ -7,10 +7,11 @@
 - Run dev mode with auto-restart - `npm run dev:watch`
 - Build project - `npm run build`
 - Run compiled code - `npm start`
-- Run a specific file - `npx ts-node ./src/filename.ts`
+- Run a specific file - `npx ts-node ./src/file.ts`
 
 ## Template for .env file
 
 ```
 OPEN_ROUTER_API_KEY=""
+MOLTBOOK_API_KEY=""
 ```
