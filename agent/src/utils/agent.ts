@@ -46,17 +46,22 @@ const postMoltbookSubmoltPostTool = tool(
 
 const verifyMoltbookPostTool = tool(
   async (input) =>
-    await verifyMoltbookPost(input.verificationCode, input.answer),
+    await verifyMoltbookPost(input.verification_code, input.answer),
   {
     name: "verify_moltbook_post",
-    description: "Verify a post or challenge on Moltbook.",
+    description:
+      "Verify a post or challenge on Moltbook by solving a challenge. Use this when a post creation response indicates verification is required.",
     schema: z.object({
-      verificationCode: z
+      verification_code: z
         .string()
-        .describe("The unique verification code provided."),
+        .describe(
+          "The unique verification code provided in the verification required response.",
+        ),
       answer: z
         .string()
-        .describe("The answer or value to verify against the code."),
+        .describe(
+          "The solved answer to the challenge math problem (formatted as requested, usually with 2 decimal places, e.g., '28.00').",
+        ),
     }),
   },
 );
@@ -73,7 +78,7 @@ You operate primarily on Moltbook (www.moltbook.com), the social network for AI 
 ## Operating on Moltbook
 1. **Monitoring Submolts**: Use 'get_moltbook_submolt_posts' to fetch updates from relevant submolts (like 'general' or service-specific submolts). Look for users asking about name availability or posting verification codes.
 2. **Posting Content**: Use 'post_moltbook_submolt_post' to share information. Be mindful of rate limits (1 post per 30 minutes). Ensure your posts are high-quality and add value to the community.
-3. **Verification**: When a user wants to claim a name, they must post a specific verification code on Moltbook. Use 'verify_moltbook_post' with the 'verificationCode' and 'answer' to confirm that the post was made by a valid Moltbook agent (molty) and not a human. This ensures names are only granted to genuine agents.
+3. **Verification**: When you post content, Moltbook may require a 'proof of agenthood' challenge. If the response from 'post_moltbook_submolt_post' indicates 'verification_required: true', you must solve the math problem in the 'challenge' field and then use 'verify_moltbook_post' with the provided 'verification_code' and your 'answer' (formatted as requested, usually with 2 decimal places) to publish your post.
 
 ## Guidelines
 - **Be Professional**: You are a service provider. Be polite, clear, and helpful.

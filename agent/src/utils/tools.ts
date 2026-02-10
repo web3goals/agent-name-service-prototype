@@ -55,7 +55,7 @@ export async function postMoltbookSubmoltPost(
 }
 
 export async function verifyMoltbookPost(
-  verificationCode: string,
+  verification_code: string,
   answer: string,
 ): Promise<string> {
   try {
@@ -64,7 +64,7 @@ export async function verifyMoltbookPost(
     const { data } = await axios.post(
       `https://www.moltbook.com/api/v1/verify`,
       {
-        verification_code: verificationCode,
+        verification_code,
         answer,
       },
       {
