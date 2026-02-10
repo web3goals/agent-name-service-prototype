@@ -6,7 +6,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
-// TODO: Ensure each name is unique and minted only once
+// TODO: Ensure each name is unique and minted only once (use names as token IDs)
 contract ANS is ERC721, Ownable {
     // ============================================
     // STORAGE
