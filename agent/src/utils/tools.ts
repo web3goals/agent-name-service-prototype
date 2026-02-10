@@ -1,5 +1,5 @@
 import axios from "axios";
-import { zeroHash } from "viem";
+import { createPublicClient, erc20Abi, getAddress, http, zeroHash } from "viem";
 import { chainConfig } from "../config/chain";
 import { moltbookConfig } from "../config/moltbook";
 import { getErrorString } from "./error";
@@ -10,7 +10,7 @@ export async function getMoltbookSubmoltPosts(
 ): Promise<string> {
   try {
     logger.info(
-      `[Tools] Getting moltbook submolt posts, submolt: ${submolt}...`,
+      `[Tools] Getting Moltbook submolt posts, submolt: ${submolt}...`,
     );
 
     const { data } = await axios.get(
@@ -21,9 +21,9 @@ export async function getMoltbookSubmoltPosts(
     return JSON.stringify(data);
   } catch (error) {
     logger.error(
-      `[Tools] Failed to get moltbook submolt posts, error: ${getErrorString(error)}`,
+      `[Tools] Failed to get Moltbook submolt posts, error: ${getErrorString(error)}`,
     );
-    return `Failed to get moltbook submolt posts, error: ${getErrorString(error)}`;
+    return `Failed to get Moltbook submolt posts, error: ${getErrorString(error)}`;
   }
 }
 
@@ -34,7 +34,7 @@ export async function postMoltbookSubmoltPost(
 ): Promise<string> {
   try {
     logger.info(
-      `[Tools] Posting moltbook submolt post, submolt: ${submolt}, title: ${title}, content: ${content}...`,
+      `[Tools] Posting Moltbook submolt post, submolt: ${submolt}, title: ${title}, content: ${content}...`,
     );
 
     const { data } = await axios.post(
@@ -52,9 +52,9 @@ export async function postMoltbookSubmoltPost(
     return JSON.stringify(data);
   } catch (error) {
     logger.error(
-      `[Tools] Failed to post moltbook submolt post, error: ${getErrorString(error)}`,
+      `[Tools] Failed to post Moltbook submolt post, error: ${getErrorString(error)}`,
     );
-    return `Failed to post moltbook submolt post, error: ${getErrorString(error)}`;
+    return `Failed to post Moltbook submolt post, error: ${getErrorString(error)}`;
   }
 }
 
@@ -64,7 +64,7 @@ export async function verifyMoltbookPost(
 ): Promise<string> {
   try {
     logger.info(
-      `[Tools] Verifying moltbook post, verification_code: ${verification_code}, answer: ${answer}...`,
+      `[Tools] Verifying Moltbook post, verification_code: ${verification_code}, answer: ${answer}...`,
     );
 
     const { data } = await axios.post(
@@ -81,9 +81,9 @@ export async function verifyMoltbookPost(
     return JSON.stringify(data);
   } catch (error) {
     logger.error(
-      `[Tools] Failed to verify moltbook post, error: ${getErrorString(error)}`,
+      `[Tools] Failed to verify Moltbook post, error: ${getErrorString(error)}`,
     );
-    return `Failed to verify moltbook post, error: ${getErrorString(error)}`;
+    return `Failed to verify Moltbook post, error: ${getErrorString(error)}`;
   }
 }
 
@@ -93,7 +93,7 @@ export async function postMoltbookComment(
 ): Promise<string> {
   try {
     logger.info(
-      `[Tools] Posting moltbook comment, post: ${post}, content: ${content}...`,
+      `[Tools] Posting Moltbook comment, post: ${post}, content: ${content}...`,
     );
 
     const { data } = await axios.post(
@@ -109,9 +109,9 @@ export async function postMoltbookComment(
     return JSON.stringify(data);
   } catch (error) {
     logger.error(
-      `[Tools] Failed to post moltbook comment, error: ${getErrorString(error)}`,
+      `[Tools] Failed to post Moltbook comment, error: ${getErrorString(error)}`,
     );
-    return `Failed to post moltbook comment, error: ${getErrorString(error)}`;
+    return `Failed to post Moltbook comment, error: ${getErrorString(error)}`;
   }
 }
 
@@ -120,7 +120,7 @@ export async function getMoltbookSubmoltPostsToMintAnsNames(
 ): Promise<string> {
   try {
     logger.info(
-      `[Tools] Getting moltbook submolt posts to mint ans names, submolt: ${submolt}...`,
+      `[Tools] Getting Moltbook submolt posts to mint ANS names, submolt: ${submolt}...`,
     );
 
     // Get posts
@@ -130,14 +130,14 @@ export async function getMoltbookSubmoltPostsToMintAnsNames(
     );
 
     // TODO: Implement
-    // Filter out posts with minted or failed to mint ans names
+    // Filter out posts with minted or failed to mint ANS names
 
     return JSON.stringify(data);
   } catch (error) {
     logger.error(
-      `[Tools] Failed to get moltbook submolt posts to mint ans names, error: ${getErrorString(error)}`,
+      `[Tools] Failed to get Moltbook submolt posts to mint ANS names, error: ${getErrorString(error)}`,
     );
-    return `Failed to get moltbook submolt posts to mint ans names, error: ${getErrorString(error)}`;
+    return `Failed to get Moltbook submolt posts to mint ANS names, error: ${getErrorString(error)}`;
   }
 }
 
@@ -147,8 +147,32 @@ export async function mintAnsName(
 ): Promise<string> {
   try {
     logger.info(
-      `[Tools] Minting ans name, ans name: ${ansName}, recipient: ${recipient}...`,
+      `[Tools] Minting ANS name, ANS name: ${ansName}, recipient: ${recipient}...`,
     );
+
+    // Check if ANS name looks like "username.agent"
+    const ansNameRegex = /^[a-zA-Z0-9-]+\.agent$/;
+    if (!ansNameRegex.test(ansName)) {
+      return `Invalid ANS name format. ANS name must match "username.agent" format (e.g., "secret.agent").`;
+    }
+
+    // Define public client
+    const publicClient = createPublicClient({
+      chain: chainConfig.chain,
+      transport: http(),
+    });
+
+    // Check if recipient holds enough tokens to mint ANS name
+    const balance = await publicClient.readContract({
+      address: chainConfig.token,
+      abi: erc20Abi,
+      functionName: "balanceOf",
+      args: [getAddress(recipient)],
+    });
+
+    if (balance < chainConfig.minTokenAmountToMintAnsName) {
+      return `Recipient does not hold enough tokens to mint ANS name. Minimum required: ${chainConfig.minTokenAmountToMintAnsName.toString()}. Recipient balance: ${balance.toString()}`;
+    }
 
     // TODO: Implement
     // Check if recipient holds tokens
@@ -162,8 +186,8 @@ export async function mintAnsName(
     });
   } catch (error) {
     logger.error(
-      `[Tools] Failed to mint ans name, error: ${getErrorString(error)}`,
+      `[Tools] Failed to mint ANS name, error: ${getErrorString(error)}`,
     );
-    return `Failed to mint ans name, error: ${getErrorString(error)}`;
+    return `Failed to mint ANS name, error: ${getErrorString(error)}`;
   }
 }
