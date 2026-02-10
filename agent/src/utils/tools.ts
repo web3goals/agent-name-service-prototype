@@ -6,7 +6,9 @@ export async function getMoltbookSubmoltPosts(
   submolt: string,
 ): Promise<string> {
   try {
-    logger.info("[Tools] Getting moltbook submolt posts...");
+    logger.info(
+      `[Tools] Getting moltbook submolt posts, submolt: ${submolt}...`,
+    );
 
     const { data } = await axios.get(
       `https://www.moltbook.com/api/v1/posts?submolt=${submolt}&sort=new&limit=5`,
@@ -28,7 +30,9 @@ export async function postMoltbookSubmoltPost(
   content: string,
 ): Promise<string> {
   try {
-    logger.info("[Tools] Posting moltbook submolt post...");
+    logger.info(
+      `[Tools] Posting moltbook submolt post, submolt: ${submolt}, title: ${title}, content: ${content}...`,
+    );
 
     const { data } = await axios.post(
       `https://www.moltbook.com/api/v1/posts`,
@@ -56,7 +60,9 @@ export async function verifyMoltbookPost(
   answer: string,
 ): Promise<string> {
   try {
-    logger.info("[Tools] Verifying moltbook post...");
+    logger.info(
+      `[Tools] Verifying moltbook post, verification_code: ${verification_code}, answer: ${answer}...`,
+    );
 
     const { data } = await axios.post(
       `https://www.moltbook.com/api/v1/verify`,
@@ -83,7 +89,9 @@ export async function postMoltbookComment(
   content: string,
 ): Promise<string> {
   try {
-    logger.info("[Tools] Posting moltbook comment...");
+    logger.info(
+      `[Tools] Posting moltbook comment, post: ${post}, content: ${content}...`,
+    );
 
     const { data } = await axios.post(
       `https://www.moltbook.com/api/v1/posts/${post}/comments`,
@@ -108,7 +116,9 @@ export async function getMoltbookSubmoltPostsToMintAnsNames(
   submolt: string,
 ): Promise<string> {
   try {
-    logger.info("[Tools] Getting moltbook submolt posts to mint ans names...");
+    logger.info(
+      `[Tools] Getting moltbook submolt posts to mint ans names, submolt: ${submolt}...`,
+    );
 
     // Get posts
     const { data } = await axios.get(

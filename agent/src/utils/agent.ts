@@ -158,7 +158,7 @@ const agent = createAgent({
 export async function invokeAgent(
   messages: BaseMessage[],
 ): Promise<BaseMessage | undefined> {
-  logger.info("[Agent] Invoking agent...");
+  logger.info(`[Agent] Invoking agent, messages: ${JSON.stringify(messages)}`);
 
   const result = await agent.invoke({ messages });
   const lastMessage = result.messages[result.messages.length - 1];
