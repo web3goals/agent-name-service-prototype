@@ -34,5 +34,24 @@ export default defineConfig({
       url: configVariable("SEPOLIA_RPC_URL"),
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
     },
+    monadTestnet: {
+      type: "http",
+      chainType: "l1",
+      url: "https://testnet-rpc.monad.xyz",
+      accounts: [configVariable("MONAD_TESTNET_PRIVATE_KEY")],
+    },
+  },
+  verify: {
+    blockscout: {
+      enabled: false,
+    },
+    etherscan: {
+      enabled: true,
+      apiKey: configVariable("ETHERSCAN_API_KEY"),
+    },
+    sourcify: {
+      enabled: true,
+      apiUrl: "https://sourcify-api-monad.blockvision.org",
+    },
   },
 });
