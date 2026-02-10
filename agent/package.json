@@ -19,9 +19,12 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@langchain/core": "^1.1.20",
+    "@langchain/openai": "^1.2.6",
     "axios": "^1.13.5",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "langchain": "^1.2.19",
     "node-cron": "^4.2.1",
     "winston": "^3.19.0"
   }

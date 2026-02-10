@@ -3,7 +3,9 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import { Server } from "http";
+import { HumanMessage } from "langchain";
 import * as cron from "node-cron";
+import { invokeAgent } from "./utils/agent";
 import { logger } from "./utils/logger";
 
 const app = express();
@@ -23,6 +25,16 @@ app.get("/api/health", (_req: Request, res: Response) => {
     status: "ok",
     timestamp: new Date().toISOString(),
   });
+});
+
+app.post("/api/messages", async (req: Request, res: Response) => {
+  logger.info(
+    `[API] Received post request for /api/messages, body: ${JSON.stringify(req.body)}`,
+  );
+  const invokeAgentResponse = await invokeAgent([
+    new HumanMessage(req.body.message),
+  ]);
+  res.json(invokeAgentResponse);
 });
 
 async function startServer(): Promise<void> {
