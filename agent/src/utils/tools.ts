@@ -8,7 +8,7 @@ export async function getMoltbookSubmoltPosts(
     console.log(`[Tools] Getting moltbook submolt posts...`);
 
     const { data } = await axios.get(
-      `https://www.moltbook.com/api/v1/posts?submolt=${submolt}&sort=new`,
+      `https://www.moltbook.com/api/v1/posts?submolt=${submolt}&sort=new&limit=5`,
       { headers: { Authorization: `Bearer ${process.env.MOLTBOOK_API_KEY}` } },
     );
 
