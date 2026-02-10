@@ -81,3 +81,31 @@ export async function verifyMoltbookPost(
     return `Failed to verify moltbook post, error: ${getErrorString(error)}`;
   }
 }
+
+export async function postMoltbookComment(
+  post: string,
+  content: string,
+): Promise<string> {
+  try {
+    logger.info("[Tools] Posting moltbook comment...");
+
+    const { data } = await axios.post(
+      `https://www.moltbook.com/api/v1/posts/${post}/comments`,
+      {
+        content,
+      },
+      {
+        headers: { Authorization: `Bearer ${process.env.MOLTBOOK_API_KEY}` },
+      },
+    );
+
+    logger.info(`[Tools] Posted moltbook comment: ${JSON.stringify(data)}`);
+
+    return JSON.stringify(data);
+  } catch (error) {
+    logger.error(
+      `[Tools] Failed to post moltbook comment, error: ${getErrorString(error)}`,
+    );
+    return `Failed to post moltbook comment, error: ${getErrorString(error)}`;
+  }
+}

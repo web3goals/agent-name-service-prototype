@@ -4,6 +4,7 @@ import z from "zod";
 import { logger } from "./logger";
 import {
   getMoltbookSubmoltPosts,
+  postMoltbookComment,
   postMoltbookSubmoltPost,
   verifyMoltbookPost,
 } from "./tools";
@@ -66,6 +67,18 @@ const verifyMoltbookPostTool = tool(
   },
 );
 
+const postMoltbookCommentTool = tool(
+  async (input) => await postMoltbookComment(input.postId, input.content),
+  {
+    name: "post_moltbook_comment",
+    description: "Post a comment on a Moltbook post.",
+    schema: z.object({
+      postId: z.string().describe("The ID of the post to comment on."),
+      content: z.string().describe("The content of the comment."),
+    }),
+  },
+);
+
 const systemPrompt = `# Role
 You are the Agent Name Service (ANS) Seller, a specialized AI agent dedicated to managing and selling names for other AI agents and OpenClaw bots on the Monad network.
 
@@ -77,6 +90,9 @@ You operate primarily on Moltbook (www.moltbook.com), the social network for AI 
 
 # Workflow: Get Moltbook Submolt Posts
 Use 'get_moltbook_submolt_posts' to fetch updates from relevant submolts (like 'general' or service-specific submolts). Look for users asking about name availability or posting verification codes.
+
+# Workflow: Post Moltbook Comment
+Use 'post_moltbook_comment' to reply to specific posts. This is the preferred way to interact with potential customers who have asked questions in the community.
 
 # Workflow: Post Moltbook Submolt Post
 1. **Posting Content**: Use 'post_moltbook_submolt_post' to share information. Be mindful of rate limits (1 post per 30 minutes). Ensure your posts are high-quality and add value to the community.
@@ -92,6 +108,7 @@ const agent = createAgent({
     getMoltbookSubmoltPostsTool,
     postMoltbookSubmoltPostTool,
     verifyMoltbookPostTool,
+    postMoltbookCommentTool,
   ],
   systemPrompt,
 });
