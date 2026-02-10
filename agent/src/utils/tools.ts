@@ -1,4 +1,7 @@
 import axios from "axios";
+import { zeroHash } from "viem";
+import { chainConfig } from "../config/chain";
+import { moltbookConfig } from "../config/moltbook";
 import { getErrorString } from "./error";
 import { logger } from "./logger";
 
@@ -11,7 +14,7 @@ export async function getMoltbookSubmoltPosts(
     );
 
     const { data } = await axios.get(
-      `https://www.moltbook.com/api/v1/posts?submolt=${submolt}&sort=new&limit=5`,
+      `https://www.moltbook.com/api/v1/posts?submolt=${submolt}&sort=new&limit=${moltbookConfig.getPostsLimit}`,
       { headers: { Authorization: `Bearer ${process.env.MOLTBOOK_API_KEY}` } },
     );
 
@@ -122,7 +125,7 @@ export async function getMoltbookSubmoltPostsToMintAnsNames(
 
     // Get posts
     const { data } = await axios.get(
-      `https://www.moltbook.com/api/v1/posts?submolt=${submolt}&sort=new&limit=5`,
+      `https://www.moltbook.com/api/v1/posts?submolt=${submolt}&sort=new&limit=${moltbookConfig.getPostsLimit}`,
       { headers: { Authorization: `Bearer ${process.env.MOLTBOOK_API_KEY}` } },
     );
 
@@ -154,8 +157,8 @@ export async function mintAnsName(
     // Otherwise return appropriate error message
 
     return JSON.stringify({
-      transaction:
-        "https://monadvision.com/tx/0x0000000000000000000000000000000000000000000000000000000000000000",
+      blockExplorerUrl: chainConfig.chain.blockExplorers.default.url,
+      transactionHash: zeroHash,
     });
   } catch (error) {
     logger.error(

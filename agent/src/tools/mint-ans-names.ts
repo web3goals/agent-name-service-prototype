@@ -1,18 +1,15 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { logger } from "../utils/logger";
-import { invokeAgent } from "../utils/agent";
 import { HumanMessage } from "langchain";
-import { moltbookConfig } from "../config/moltbook";
+import { invokeAgent } from "../utils/agent";
+import { logger } from "../utils/logger";
 
 async function main() {
   logger.info("[Tool] Minting ANS names...");
 
   const invokeAgentResponse = await invokeAgent([
-    new HumanMessage(
-      `Mint ANS names for the "${moltbookConfig.submolt}" submolt`,
-    ),
+    new HumanMessage(`Start the process of minting ANS names`),
   ]);
   logger.info(
     `[Tool] Invoke agent response: ${JSON.stringify(invokeAgentResponse)}`,
