@@ -172,6 +172,7 @@ export async function getMoltbookSubmoltPostsToMintAnsNames(
 export async function mintAnsName(
   ansName: string,
   recipient: string,
+  personality: string,
 ): Promise<string> {
   try {
     logger.info(
@@ -244,7 +245,7 @@ export async function mintAnsName(
       address: chainConfig.erc721Address,
       abi: ansAbi,
       functionName: "safeMint",
-      args: [getAddress(recipient), ansName, "{}"],
+      args: [getAddress(recipient), ansName, personality],
       account,
     });
     const transactionHash = await walletClient.writeContract(request);

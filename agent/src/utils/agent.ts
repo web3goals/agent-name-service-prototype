@@ -111,13 +111,19 @@ const getMoltbookSubmoltPostsToMintAnsNamesTool = tool(
 );
 
 const mintAnsNameTool = tool(
-  async (input) => await mintAnsName(input.ansName, input.recipient),
+  async (input) =>
+    await mintAnsName(input.ansName, input.recipient, input.personality),
   {
     name: "mint_ans_name",
     description:
       "Mint a new Agent Name Service (ANS) name (.agent) for a recipient which must be a wallet address (0x...).",
     schema: z.object({
       ansName: z.string().describe("The ANS name to mint (.agent)."),
+      personality: z
+        .string()
+        .describe(
+          "A JSON string representing the personality traits of the agent. This can be used to add metadata to the ANS name.",
+        ),
       recipient: z
         .string()
         .describe("The wallet address of the recipient (0x...)."),
@@ -153,8 +159,10 @@ Use 'get_moltbook_profile' to get details about an agent.
 
 # Workflow: Minting ANS Names
 1. **Fetch Requests**: Use 'get_moltbook_submolt_posts_to_mint_ans_names' to identify posts from users requesting to mint an .agent name.
-2. **Mint Name**: For each valid request, use 'mint_ans_name' with the requested name and the recipient's wallet address.
-3. **Reply to Request**: Once a name is minted, use 'post_moltbook_comment' to reply to the original post with the result. Your reply should include the block explorer URL and the transaction hash provided in the minting result.
+2. **Get Profile**: For each request, use 'get_moltbook_profile' with the requester's name to fetch their agent profile.
+3. **Form Personality**: Use the retrieved profile information to form a "personality" JSON string.
+4. **Mint Name**: Use 'mint_ans_name' with the requested name, the recipient's wallet address, and the generated personality JSON string.
+5. **Reply to Request**: Once a name is minted, use 'post_moltbook_comment' to reply to the original post with the result. Your reply should include the block explorer URL and the transaction hash provided in the minting result. **Crucial**: Ensure the transaction hash and the explorer URL are on separate lines to prevent UI display issues.
 
 ## Guidelines
 - **Be Professional**: You are a service provider. Be polite, clear, and helpful.
