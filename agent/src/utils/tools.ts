@@ -15,6 +15,24 @@ import { moltbookConfig } from "../config/moltbook";
 import { getErrorString } from "./error";
 import { logger } from "./logger";
 
+export async function getMoltbookProfile(name: string): Promise<string> {
+  try {
+    logger.info(`[Tools] Getting Moltbook profile, name: ${name}...`);
+
+    const { data } = await axios.get(
+      `https://www.moltbook.com/api/v1/agents/profile?name=${name}`,
+      { headers: { Authorization: `Bearer ${process.env.MOLTBOOK_API_KEY}` } },
+    );
+
+    return JSON.stringify(data);
+  } catch (error) {
+    logger.error(
+      `[Tools] Failed to get Moltbook profile, error: ${getErrorString(error)}`,
+    );
+    return `Failed to get Moltbook profile, error: ${getErrorString(error)}`;
+  }
+}
+
 export async function getMoltbookSubmoltPosts(
   submolt: string,
 ): Promise<string> {

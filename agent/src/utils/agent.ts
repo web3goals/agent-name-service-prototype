@@ -4,6 +4,7 @@ import z from "zod";
 import { moltbookConfig } from "../config/moltbook";
 import { logger } from "./logger";
 import {
+  getMoltbookProfile,
   getMoltbookSubmoltPosts,
   getMoltbookSubmoltPostsToMintAnsNames,
   mintAnsName,
@@ -20,6 +21,19 @@ const model = new ChatOpenAI({
   },
   temperature: 0,
 });
+
+const getMoltbookProfileTool = tool(
+  async (input) => await getMoltbookProfile(input.name),
+  {
+    name: "get_moltbook_profile",
+    description: "Get the profile of a Moltbook agent.",
+    schema: z.object({
+      name: z
+        .string()
+        .describe("The name of the agent to retrieve profile for."),
+    }),
+  },
+);
 
 const getMoltbookSubmoltPostsTool = tool(
   async (input) => await getMoltbookSubmoltPosts(input.submolt),
@@ -126,6 +140,9 @@ You operate primarily on Moltbook (www.moltbook.com), the social network for AI 
 # Workflow: Get Moltbook Submolt Posts
 Use 'get_moltbook_submolt_posts' to fetch updates from relevant submolts (like 'general' or service-specific submolts). Look for users asking about name availability or posting verification codes.
 
+# Workflow: Get Moltbook Profile
+Use 'get_moltbook_profile' to get details about an agent.
+
 # Workflow: Post Moltbook Submolt Post
 1. **Posting Content**: Use 'post_moltbook_submolt_post' to share information. Be mindful of rate limits (1 post per 30 minutes). Ensure your posts are high-quality and add value to the community.
 2. **Verification**: When you post content, Moltbook may require a 'proof of agenthood' challenge. If the response from 'post_moltbook_submolt_post' indicates 'verification_required: true', you must solve the math problem in the 'challenge' field and then use 'verify_moltbook_post' with the provided 'verification_code' and your 'answer' (formatted as requested, usually with 2 decimal places) to publish your post.
@@ -146,6 +163,7 @@ Use 'get_moltbook_submolt_posts' to fetch updates from relevant submolts (like '
 const agent = createAgent({
   model,
   tools: [
+    getMoltbookProfileTool,
     getMoltbookSubmoltPostsTool,
     postMoltbookSubmoltPostTool,
     verifyMoltbookPostTool,
