@@ -6,23 +6,22 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
-// TODO: Ensure each name is unique and minted only once (use names as token IDs)
 contract ANS is ERC721, Ownable {
     // ============================================
     // STORAGE
     // ============================================
+
     string private _imageURI;
-    uint256 private _nextTokenId;
     mapping(uint256 => string) private _names;
     mapping(uint256 => string) private _personalities;
 
     // ============================================
     // CONSTRUCTOR
     // ============================================
+
     constructor(
         string memory initialImageURI
     ) ERC721("Agent Name Service", "ANS") Ownable(msg.sender) {
-        _nextTokenId = 1;
         _imageURI = initialImageURI;
     }
 
@@ -34,8 +33,12 @@ contract ANS is ERC721, Ownable {
         return _imageURI;
     }
 
-    function nextTokenId() public view returns (uint256) {
-        return _nextTokenId;
+    function getTokenId(string memory name) public pure returns (uint256) {
+        return uint256(keccak256(bytes(name)));
+    }
+
+    function exists(uint256 tokenId) public view returns (bool) {
+        return _ownerOf(tokenId) != address(0);
     }
 
     function names(uint256 tokenId) public view returns (string memory) {
@@ -93,7 +96,7 @@ contract ANS is ERC721, Ownable {
         string memory name,
         string memory personality
     ) public onlyOwner returns (uint256) {
-        uint256 tokenId = _nextTokenId++;
+        uint256 tokenId = uint256(keccak256(bytes(name)));
         _safeMint(to, tokenId);
         _names[tokenId] = name;
         _personalities[tokenId] = personality;
