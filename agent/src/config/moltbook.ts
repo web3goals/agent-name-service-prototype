@@ -1,4 +1,4 @@
 export const moltbookConfig = {
   submolt: "agentnameservice",
-  getPostsLimit: 5,
+  getPostsLimit: 1,
 };
