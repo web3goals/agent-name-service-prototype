@@ -4,6 +4,7 @@ import {
   createWalletClient,
   erc20Abi,
   erc721Abi,
+  formatUnits,
   getAddress,
   http,
 } from "viem";
@@ -160,10 +161,15 @@ export async function mintAnsName(
       `[Tools] Minting ANS name, ANS name: ${ansName}, recipient: ${recipient}...`,
     );
 
-    // Check if ANS name looks like "username.agent"
-    const ansNameRegex = /^[a-zA-Z0-9-]+\.agent$/;
+    // Check if ANS name is valid
+    const ansNameRegex = /^[a-z0-9-]+\.agent$/;
     if (!ansNameRegex.test(ansName)) {
-      return `Invalid ANS name format. ANS name must match "username.agent" format (e.g., "secret.agent").`;
+      return [
+        `Invalid ANS name format`,
+        `ANS name must match the "username.agent" format (where ".agent" is a fixed suffix)`,
+        `The username part must only contain lowercase letters (a-z), digits (0-9), and hyphens (-)`,
+        `Please provide a valid ANS name and try again`,
+      ].join(" ");
     }
 
     // Define public client
@@ -180,9 +186,13 @@ export async function mintAnsName(
       args: [getAddress(recipient)],
     });
 
-    // TODO: Add token symbol to the error message
     if (erc20Balance < chainConfig.minErc20AmountToMintErc721) {
-      return `Recipient does not hold enough tokens to mint ANS name. Minimum required: ${chainConfig.minErc20AmountToMintErc721.toString()}. Recipient balance: ${erc20Balance.toString()}`;
+      return [
+        `Recipient does not hold enough ${chainConfig.erc20Symbol} to mint ANS name`,
+        `Minimum required: ${formatUnits(chainConfig.minErc20AmountToMintErc721, chainConfig.erc20Decimals)} ${chainConfig.erc20Symbol}`,
+        `Recipient balance: ${formatUnits(erc20Balance, chainConfig.erc20Decimals)} ${chainConfig.erc20Symbol}`,
+        `Please fund the recipient's wallet with enough ${chainConfig.erc20Symbol} and try again`,
+      ].join(" ");
     }
 
     // Check if recipient already holds an ANS name
@@ -193,7 +203,10 @@ export async function mintAnsName(
       args: [getAddress(recipient)],
     });
     if (erc721Balance > 0n) {
-      return `Recipient already holds an ANS name.`;
+      return [
+        `Recipient already holds an ANS name.`,
+        `Please provide a different recipient and try again`,
+      ].join(" ");
     }
 
     // TODO: Implement

@@ -103,9 +103,7 @@ const mintAnsNameTool = tool(
     description:
       "Mint a new Agent Name Service (ANS) name (.agent) for a recipient which must be a wallet address (0x...).",
     schema: z.object({
-      ansName: z
-        .string()
-        .describe("The .agent name to mint (e.g., 'secret.agent')."),
+      ansName: z.string().describe("The ANS name to mint (.agent)."),
       recipient: z
         .string()
         .describe("The wallet address of the recipient (0x...)."),
