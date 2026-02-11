@@ -176,7 +176,7 @@ export async function mintAnsName(
 ): Promise<string> {
   try {
     logger.info(
-      `[Tools] Minting ANS name, ANS name: ${ansName}, recipient: ${recipient}...`,
+      `[Tools] Minting ANS name, ANS name: ${ansName}, recipient: ${recipient}, personality: ${personality}...`,
     );
 
     // Check if ANS name is valid
