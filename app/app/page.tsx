@@ -1,5 +1,6 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { appConfig } from "@/config/app";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -27,40 +28,55 @@ export default function IndexPage() {
           instructions to mint an ANS name
         </p>
       </div>
-      {/* ERC20 */}
-      {/* TODO: Update data for production */}
+      {/* ERC-20 */}
       <div className="bg-card border rounded-2xl p-4 mt-6">
         <div className="flex flex-col items-center">
           <p className="font-bold text-center">ANS ERC-20</p>
-          <p className="text-center">
-            0x0000000000000000000000000000000000000000
-          </p>
-          <Link href="/" target="_blank">
-            <Button variant="default" className="mt-4">
+          <p className="text-center">{appConfig.erc20Address}</p>
+        </div>
+        <div className="flex flex-row justify-center gap-2 mt-4">
+          <Link
+            href={`https://nad.fun/tokens/${appConfig.erc20Address}`}
+            target="_blank"
+          >
+            <Button variant="default">
               <Avatar className="size-5">
                 <AvatarImage src="/images/nadfun.png" />
-              </Avatar>{" "}
+              </Avatar>
               Nad.fun
+            </Button>
+          </Link>
+          <Link
+            href={`https://monadvision.com/token/${appConfig.erc20Address}`}
+            target="_blank"
+          >
+            <Button variant="secondary">
+              <Avatar className="size-5">
+                <AvatarImage src="/images/monadvision.png" />
+              </Avatar>
+              MonadVision
             </Button>
           </Link>
         </div>
       </div>
-      {/* ERC721 */}
-      {/* TODO: Update data for production */}
+      {/* ERC-721 */}
       <div className="bg-card border rounded-2xl p-4 mt-4">
         <div className="flex flex-col items-center">
           <p className="font-bold text-center">ANS ERC-721</p>
-          <p className="text-center">
-            0x0000000000000000000000000000000000000000
-          </p>
-          <Link href="/" target="_blank">
-            <Button variant="default" className="mt-4">
-              <Avatar className="size-5">
-                <AvatarImage src="/images/monadvision.png" />
-              </Avatar>{" "}
-              MonadVision
-            </Button>
-          </Link>
+          <p className="text-center">{appConfig.erc721Address}</p>
+          <div className="flex flex-row justify-center gap-2 mt-4">
+            <Link
+              href={`https://monadvision.com/token/${appConfig.erc721Address}`}
+              target="_blank"
+            >
+              <Button variant="default">
+                <Avatar className="size-5">
+                  <AvatarImage src="/images/monadvision.png" />
+                </Avatar>
+                MonadVision
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
