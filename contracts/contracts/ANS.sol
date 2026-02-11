@@ -113,8 +113,4 @@ contract ANS is ERC721, Ownable {
     ) public onlyOwner {
         _personalities[tokenId] = personality;
     }
-
-    function setName(uint256 tokenId, string memory name) public onlyOwner {
-        _names[tokenId] = name;
-    }
 }

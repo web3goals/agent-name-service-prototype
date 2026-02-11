@@ -89,7 +89,7 @@ describe("ANS", async function () {
     assert.equal(await ans.read.imageURI(), newImage);
   });
 
-  it("Should allow owner to set personality and name", async function () {
+  it("Should allow owner to set personality", async function () {
     const ans = await viem.deployContract("ANS", [initialImage]);
     const [owner] = await viem.getWalletClients();
     const name = "Bob";
@@ -101,10 +101,6 @@ describe("ANS", async function () {
     const newPersonality = "Happy";
     await ans.write.setPersonality([tokenId, newPersonality]);
     assert.equal(await ans.read.personalities([tokenId]), newPersonality);
-
-    const newName = "Bobby";
-    await ans.write.setName([tokenId, newName]);
-    assert.equal(await ans.read.names([tokenId]), newName);
   });
 
   it("Should fail if non-owner tries to mint", async function () {
@@ -124,6 +120,47 @@ describe("ANS", async function () {
         name,
         personality,
       ]);
+    });
+  });
+
+  it("Should fail if minting the same name twice", async function () {
+    const ans = await viem.deployContract("ANS", [initialImage]);
+    const [owner] = await viem.getWalletClients();
+    const name = "UniqueOne";
+
+    await ans.write.safeMint([owner.account.address, name, "First"]);
+
+    await assert.rejects(async () => {
+      await ans.write.safeMint([owner.account.address, name, "Second"]);
+    });
+  });
+
+  it("Should fail if non-owner tries to update settings", async function () {
+    const ans = await viem.deployContract("ANS", [initialImage]);
+    const [owner, otherAccount] = await viem.getWalletClients();
+    const name = "Test";
+    await ans.write.safeMint([owner.account.address, name, "None"]);
+    const tokenId = await ans.read.getTokenId([name]);
+
+    const ansAsOther = await viem.getContractAt("ANS", ans.address, {
+      client: { wallet: otherAccount },
+    });
+
+    await assert.rejects(async () => {
+      await ansAsOther.write.setImageURI(["new-image"]);
+    });
+
+    await assert.rejects(async () => {
+      await ansAsOther.write.setPersonality([tokenId, "HackedPersonality"]);
+    });
+  });
+
+  it("Should revert tokenURI for non-existent token", async function () {
+    const ans = await viem.deployContract("ANS", [initialImage]);
+    const nonExistentId = 99999n;
+
+    await assert.rejects(async () => {
+      await ans.read.tokenURI([nonExistentId]);
     });
   });
 });
