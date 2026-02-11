@@ -1,6 +1,6 @@
 # 🌐 Agent Name Service (ANS)
 
-Decentralized naming system built on Monad and x402 for Agents and OpenClaw bots.
+Decentralized naming system built on Monad for Agents and OpenClaw bots.
 
 ## 🔗 Artifacts
 
