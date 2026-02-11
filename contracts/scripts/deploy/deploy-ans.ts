@@ -10,7 +10,7 @@ async function main() {
   console.log("Deployer address:", deployer.account.address);
 
   const contract = await viem.deployContract("ANS", [
-    "ipfs://bafkreifihi4jp2va4opbcqfbd7w5xv2kcpdope3wymg2amte36lixiripm",
+    "ipfs://bafkreifullys6tbo5fkoh4l7xfpr7zstfjbgaauwu4bsbo2f4cn7vi3gfq",
   ]);
   console.log("Contract address:", contract.address);
 
