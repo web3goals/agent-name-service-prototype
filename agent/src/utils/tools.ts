@@ -3,7 +3,6 @@ import {
   createPublicClient,
   createWalletClient,
   erc20Abi,
-  erc721Abi,
   formatUnits,
   getAddress,
   http,
@@ -217,7 +216,7 @@ export async function mintAnsName(
     // Check if recipient already holds an ANS name
     const erc721Balance = await publicClient.readContract({
       address: chainConfig.erc721Address,
-      abi: erc721Abi,
+      abi: ansAbi,
       functionName: "balanceOf",
       args: [getAddress(recipient)],
     });
@@ -228,8 +227,25 @@ export async function mintAnsName(
       ].join(" ");
     }
 
-    // TODO: Implement
     // Check if ANS name is available
+    const tokenId = await publicClient.readContract({
+      address: chainConfig.erc721Address,
+      abi: ansAbi,
+      functionName: "getTokenId",
+      args: [ansName],
+    });
+    const exists = await publicClient.readContract({
+      address: chainConfig.erc721Address,
+      abi: ansAbi,
+      functionName: "exists",
+      args: [tokenId],
+    });
+    if (exists) {
+      return [
+        `ANS name is already minted.`,
+        `Please create a new request to mint ANS name with a different ANS name.`,
+      ].join(" ");
+    }
 
     // Mint ANS name to recipient
     const account = privateKeyToAccount(
@@ -240,7 +256,6 @@ export async function mintAnsName(
       chain: chainConfig.chain,
       transport: http(),
     });
-    // TODO: Pass personality
     const { request } = await publicClient.simulateContract({
       address: chainConfig.erc721Address,
       abi: ansAbi,
