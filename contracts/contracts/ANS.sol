@@ -3,7 +3,6 @@ pragma solidity ^0.8.28;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 
 contract ANS is ERC721, Ownable {
@@ -14,6 +13,16 @@ contract ANS is ERC721, Ownable {
     string private _imageURI;
     mapping(uint256 => string) private _names;
     mapping(uint256 => string) private _personalities;
+
+    // ============================================
+    // EVENTS & ERRORS
+    // ============================================
+
+    event PersonalityUpdated(uint256 indexed tokenId, string newPersonality);
+    event ImageURIUpdated(string newImageURI);
+
+    error InvalidInput(string reason);
+    error Unauthorized();
 
     // ============================================
     // CONSTRUCTOR
@@ -57,12 +66,15 @@ contract ANS is ERC721, Ownable {
         _requireOwned(tokenId);
 
         string memory personality = _personalities[tokenId];
+        string memory name = _names[tokenId];
 
+        // Construct JSON
+        // Note: _validateInput ensures name/personality don't contain quotes that break JSON
         bytes memory dataURI = bytes(
             string.concat(
                 "{",
                 '"name": "',
-                _names[tokenId],
+                name,
                 '",',
                 '"description": "An official identity in the Agent Name Service (ANS) ecosystem.",',
                 '"image": "',
@@ -70,7 +82,7 @@ contract ANS is ERC721, Ownable {
                 '",',
                 '"attributes": [',
                 '{"trait_type": "Name", "value": "',
-                _names[tokenId],
+                name,
                 '"},',
                 '{"trait_type": "Personality", "value": "',
                 personality,
@@ -88,6 +100,25 @@ contract ANS is ERC721, Ownable {
     }
 
     // ============================================
+    // PUBLIC FUNCTIONS
+    // ============================================
+
+    // Allow the Token Owner (or Approved) to update their Agent's personality
+    function setPersonality(uint256 tokenId, string memory personality) public {
+        _requireOwned(tokenId);
+
+        // Allow Owner of token OR Contract Owner (optional admin override)
+        if (_ownerOf(tokenId) != msg.sender && owner() != msg.sender) {
+            revert Unauthorized();
+        }
+
+        _validateInput(personality);
+        _personalities[tokenId] = personality;
+
+        emit PersonalityUpdated(tokenId, personality);
+    }
+
+    // ============================================
     // OWNER FUNCTIONS
     // ============================================
 
@@ -96,21 +127,39 @@ contract ANS is ERC721, Ownable {
         string memory name,
         string memory personality
     ) public onlyOwner returns (uint256) {
-        uint256 tokenId = uint256(keccak256(bytes(name)));
+        _validateInput(name);
+        _validateInput(personality);
+
+        uint256 tokenId = getTokenId(name);
+
+        // _safeMint already checks if token exists
         _safeMint(to, tokenId);
+
         _names[tokenId] = name;
         _personalities[tokenId] = personality;
+
         return tokenId;
     }
 
     function setImageURI(string memory newImageURI) public onlyOwner {
         _imageURI = newImageURI;
+        emit ImageURIUpdated(newImageURI);
     }
 
-    function setPersonality(
-        uint256 tokenId,
-        string memory personality
-    ) public onlyOwner {
-        _personalities[tokenId] = personality;
+    // ============================================
+    // INTERNAL FUNCTIONS
+    // ============================================
+
+    // Simple validation to prevent JSON injection and empty strings
+    function _validateInput(string memory str) internal pure {
+        bytes memory b = bytes(str);
+        if (b.length == 0) revert InvalidInput("Empty string");
+        if (b.length > 100) revert InvalidInput("Too long");
+
+        for (uint i; i < b.length; i++) {
+            if (b[i] == '"' || b[i] == "\\" || b[i] < 0x20) {
+                revert InvalidInput("Invalid character");
+            }
+        }
     }
 }
