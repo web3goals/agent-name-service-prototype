@@ -18,6 +18,7 @@ contract ANS is ERC721, Ownable {
     // EVENTS & ERRORS
     // ============================================
 
+    event NameUpdated(uint256 indexed tokenId, string newName);
     event PersonalityUpdated(uint256 indexed tokenId, string newPersonality);
     event ImageURIUpdated(string newImageURI);
 
@@ -102,6 +103,21 @@ contract ANS is ERC721, Ownable {
     // ============================================
     // PUBLIC FUNCTIONS
     // ============================================
+
+    // Allow the Token Owner (or Approved) to update their Agent's name
+    function setName(uint256 tokenId, string memory name) public {
+        _requireOwned(tokenId);
+
+        // Allow Owner of token OR Contract Owner (optional admin override)
+        if (_ownerOf(tokenId) != msg.sender && owner() != msg.sender) {
+            revert Unauthorized();
+        }
+
+        _validateInput(name);
+        _names[tokenId] = name;
+
+        emit NameUpdated(tokenId, name);
+    }
 
     // Allow the Token Owner (or Approved) to update their Agent's personality
     function setPersonality(uint256 tokenId, string memory personality) public {

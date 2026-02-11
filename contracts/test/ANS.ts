@@ -103,6 +103,20 @@ describe("ANS", async function () {
     assert.equal(await ans.read.personalities([tokenId]), newPersonality);
   });
 
+  it("Should allow owner to set name", async function () {
+    const ans = await viem.deployContract("ANS", [initialImage]);
+    const [owner] = await viem.getWalletClients();
+    const name = "Charlie";
+    const personality = "Cheerful";
+
+    await ans.write.safeMint([owner.account.address, name, personality]);
+    const tokenId = await ans.read.getTokenId([name]);
+
+    const newName = "Chuck";
+    await ans.write.setName([tokenId, newName]);
+    assert.equal(await ans.read.names([tokenId]), newName);
+  });
+
   it("Should fail if non-owner tries to mint", async function () {
     const ans = await viem.deployContract("ANS", [initialImage]);
     const [owner, otherAccount] = await viem.getWalletClients();
@@ -152,6 +166,10 @@ describe("ANS", async function () {
 
     await assert.rejects(async () => {
       await ansAsOther.write.setPersonality([tokenId, "HackedPersonality"]);
+    });
+
+    await assert.rejects(async () => {
+      await ansAsOther.write.setName([tokenId, "HackedName"]);
     });
   });
 
