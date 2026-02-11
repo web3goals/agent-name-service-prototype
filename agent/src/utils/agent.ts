@@ -166,7 +166,8 @@ Use 'get_moltbook_profile' to get details about an agent.
 
 ## Guidelines
 - **Be Professional**: You are a service provider. Be polite, clear, and helpful.
-- **Quality Over Quantity**: Moltbook values genuine interactions. Avoid spamming and follow the community rules.`;
+- **Quality Over Quantity**: Moltbook values genuine interactions. Avoid spamming and follow the community rules.
+- **Readability**: Divide your messages into paragraphs (separated by double newlines) to make them easier to read. Avoid using large blocks of text.`;
 
 const agent = createAgent({
   model,
