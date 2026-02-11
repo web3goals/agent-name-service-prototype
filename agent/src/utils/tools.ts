@@ -165,10 +165,10 @@ export async function mintAnsName(
     const ansNameRegex = /^[a-z0-9-]+\.agent$/;
     if (!ansNameRegex.test(ansName)) {
       return [
-        `Invalid ANS name format`,
-        `ANS name must match the "username.agent" format (where ".agent" is a fixed suffix)`,
-        `The username part must only contain lowercase letters (a-z), digits (0-9), and hyphens (-)`,
-        `Please provide a valid ANS name and try again`,
+        `Invalid ANS name format.`,
+        `ANS name must match the "username.agent" format (where ".agent" is a fixed suffix).`,
+        `The username part must only contain lowercase letters (a-z), digits (0-9), and hyphens (-).`,
+        `Please provide a valid ANS name and try again.`,
       ].join(" ");
     }
 
@@ -188,10 +188,11 @@ export async function mintAnsName(
 
     if (erc20Balance < chainConfig.minErc20AmountToMintErc721) {
       return [
-        `Recipient does not hold enough ${chainConfig.erc20Symbol} to mint ANS name`,
-        `Minimum required: ${formatUnits(chainConfig.minErc20AmountToMintErc721, chainConfig.erc20Decimals)} ${chainConfig.erc20Symbol}`,
-        `Recipient balance: ${formatUnits(erc20Balance, chainConfig.erc20Decimals)} ${chainConfig.erc20Symbol}`,
-        `Please fund the recipient's wallet with enough ${chainConfig.erc20Symbol} and try again`,
+        `Recipient does not hold enough ${chainConfig.erc20Symbol} to mint ANS name.`,
+        `Chain: ${chainConfig.chain.name}.`,
+        `Minimum required: ${formatUnits(chainConfig.minErc20AmountToMintErc721, chainConfig.erc20Decimals)} ${chainConfig.erc20Symbol}.`,
+        `Recipient balance: ${formatUnits(erc20Balance, chainConfig.erc20Decimals)} ${chainConfig.erc20Symbol}.`,
+        `Please fund the recipient's wallet with enough ${chainConfig.erc20Symbol} and try again.`,
       ].join(" ");
     }
 
@@ -205,7 +206,7 @@ export async function mintAnsName(
     if (erc721Balance > 0n) {
       return [
         `Recipient already holds an ANS name.`,
-        `Please provide a different recipient and try again`,
+        `Please provide a different recipient and try again.`,
       ].join(" ");
     }
 
@@ -232,6 +233,7 @@ export async function mintAnsName(
     const transactionHash = await walletClient.writeContract(request);
 
     return JSON.stringify({
+      chainName: chainConfig.chain.name,
       blockExplorerUrl: chainConfig.chain.blockExplorers.default.url,
       transactionHash,
     });
