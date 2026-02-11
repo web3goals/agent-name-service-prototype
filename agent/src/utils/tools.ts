@@ -151,7 +151,6 @@ export async function getMoltbookSubmoltPostsToMintAnsNames(
   }
 }
 
-// TODO: Add support of free ANS names
 export async function mintAnsName(
   ansName: string,
   recipient: string,
