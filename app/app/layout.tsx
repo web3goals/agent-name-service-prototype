@@ -5,16 +5,22 @@ import { appConfig } from "@/config/app";
 import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Quicksand, Space_Mono } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const quicksand = Quicksand({
+  variable: "--font-quicksand",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair-display",
   subsets: ["latin"],
+});
+
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -38,8 +44,9 @@ export default function RootLayout({
       <body
         className={cn(
           "bg-background antialiased",
-          geistSans.variable,
-          geistMono.variable,
+          quicksand.variable,
+          playfairDisplay.variable,
+          spaceMono.variable,
         )}
       >
         <ThemeProvider
