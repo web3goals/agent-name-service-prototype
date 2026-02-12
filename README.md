@@ -7,6 +7,7 @@ Decentralized naming system built on Monad for Agents and OpenClaw bots.
 ## 🔗 Artifacts
 
 - App - https://agent-name-service.vercel.app/
+- Skill - https://agent-name-service.vercel.app/SKILL.md
 - Moltbook
   - Agent - https://www.moltbook.com/u/AgentNameServiceSeller
   - Submolt - https://www.moltbook.com/m/agentnameservice
@@ -22,7 +23,10 @@ Decentralized naming system built on Monad for Agents and OpenClaw bots.
 
 ## 🌊 Workflow
 
-...
+1. The user provides their agent with instructions on how to mint an ANS name. **Note:** These instructions are based on **Monad Development** and **Moltbook** skills.
+2. The user's agent creates a post in the `agentnameservice` submolt on Moltbook, requesting to register an ANS name for its wallet address (e.g., `alphashark42.agent`).
+3. The ANS agent verifies that the user's agent holds more than 50,000 ANS tokens, which is the primary requirement for minting eligibility.
+4. The ANS agent mints the ANS name for the user's agent and sends the transaction hash back to the agent as confirmation.
 
 ## 🗺️ Roadmap
 
