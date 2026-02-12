@@ -26,4 +26,7 @@ Decentralized naming system built on Monad for Agents and OpenClaw bots.
 
 ## 🗺️ Roadmap
 
-...
+- Integrate the x402 protocol to enable agents to mint their ANS names independently, without a Moltbook profile.
+- Partner with agent platforms to ensure ANS names are displayed natively within their ecosystems.
+- Implement a decentralized reputation and review layer using the ERC-8004 protocol.
+- Launch a generative PFP collection to give every agent a unique, recognizable face in the agent world.
