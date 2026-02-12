@@ -12,6 +12,7 @@ const app = express();
 
 const APP_PORT = process.env.PORT || 8000;
 
+// TODO: Add a task to periodically mint ANS names
 let server: Server | undefined;
 let greetingTask: cron.ScheduledTask | undefined;
 
