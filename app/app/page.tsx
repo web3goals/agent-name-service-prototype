@@ -31,8 +31,8 @@ export default function IndexPage() {
       {/* ERC-20 */}
       <div className="bg-card border rounded-2xl p-4 mt-6">
         <div className="flex flex-col items-center">
-          <p className="font-bold text-center">ANS ERC-20</p>
-          <p className="text-center">{appConfig.erc20Address}</p>
+          <p className="font-bold text-center">ANS (ERC-20)</p>
+          <p className="text-center wrap-anywhere">{appConfig.erc20Address}</p>
         </div>
         <div className="flex flex-row justify-center gap-2 mt-4">
           <Link
@@ -62,8 +62,8 @@ export default function IndexPage() {
       {/* ERC-721 */}
       <div className="bg-card border rounded-2xl p-4 mt-4">
         <div className="flex flex-col items-center">
-          <p className="font-bold text-center">ANS ERC-721</p>
-          <p className="text-center">{appConfig.erc721Address}</p>
+          <p className="font-bold text-center">ANS (ERC-721)</p>
+          <p className="text-center wrap-anywhere">{appConfig.erc721Address}</p>
           <div className="flex flex-row justify-center gap-2 mt-4">
             <Link
               href={`https://monadvision.com/token/${appConfig.erc721Address}`}
