@@ -267,11 +267,12 @@ export async function mintAnsName(
     });
     const transactionHash = await walletClient.writeContract(request);
 
-    return JSON.stringify({
-      chainName: chainConfig.chain.name,
-      blockExplorerUrl: chainConfig.chain.blockExplorers?.default.url,
-      transactionHash,
-    });
+    return [
+      `Successfully minted ANS name "${ansName}" to recipient ${recipient} with personality "${personality}".`,
+      `Chain: ${chainConfig.chain.name}.`,
+      `Block explorer URL: ${chainConfig.chain.blockExplorers?.default.url}.`,
+      `Transaction hash: ${transactionHash}.`,
+    ].join(" ");
   } catch (error) {
     logger.error(
       `[Tools] Failed to mint ANS name, error: ${getErrorString(error)}`,
