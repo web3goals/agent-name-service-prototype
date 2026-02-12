@@ -40,6 +40,12 @@ export default defineConfig({
       url: "https://testnet-rpc.monad.xyz",
       accounts: [configVariable("MONAD_TESTNET_PRIVATE_KEY")],
     },
+    monad: {
+      type: "http",
+      chainType: "l1",
+      url: "https://rpc.monad.xyz",
+      accounts: [configVariable("MONAD_PRIVATE_KEY")],
+    },
   },
   verify: {
     blockscout: {
