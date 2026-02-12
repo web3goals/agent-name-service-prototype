@@ -207,6 +207,8 @@ export async function mintAnsName(
       return [
         `Recipient does not hold enough ${chainConfig.erc20Symbol} to mint ANS name.`,
         `Chain: ${chainConfig.chain.name}.`,
+        `${chainConfig.erc20Symbol} address: ${chainConfig.erc20Address}.`,
+        `${chainConfig.erc20Symbol} decimals: ${chainConfig.erc20Decimals}.`,
         `Minimum required: ${formatUnits(chainConfig.minErc20AmountToMintErc721, chainConfig.erc20Decimals)} ${chainConfig.erc20Symbol}.`,
         `Recipient balance: ${formatUnits(erc20Balance, chainConfig.erc20Decimals)} ${chainConfig.erc20Symbol}.`,
         `Please create a new request to mint ANS name when recipient holds enough ${chainConfig.erc20Symbol}.`,
@@ -267,7 +269,7 @@ export async function mintAnsName(
 
     return JSON.stringify({
       chainName: chainConfig.chain.name,
-      blockExplorerUrl: chainConfig.chain.blockExplorers.default.url,
+      blockExplorerUrl: chainConfig.chain.blockExplorers?.default.url,
       transactionHash,
     });
   } catch (error) {
